@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lezioni d'Italiano</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--green:#009246;--green-dark:#006830;--green-light:#E8F5EE;--green-mid:#B8DEC8;--blue:#3A4FD0;--blue-light:#EEF2FF;--blue-mid:#C8D0F8;--red:#CE2B37;--red-light:#FDEAEA;--red-dark:#A01F28;--white:#FFFFFF;--cream:#FAFAF8;--warm:#F4F4F0;--ink:#1A1A18;--ink-mid:#4A4A42;--ink-soft:#8A8A80;--border:#E0E0D8;--gold:#C9A84C;--shadow:rgba(0,100,50,0.07);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+header{background:var(--green-dark);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,80,40,0.3);}
+.header-flag{display:flex;height:4px;}
+.flag-g{flex:1;background:#009246;}.flag-w{flex:1;background:#fff;}.flag-r{flex:1;background:#CE2B37;}
+.header-inner{padding:13px 18px;display:flex;justify-content:space-between;align-items:center;}
+.header-title{font-family:'Playfair Display',serif;font-style:italic;color:#fff;font-size:1.4rem;}
+.header-gear{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:1.1rem;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;}.header-gear:hover{background:rgba(255,255,255,0.22);}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--white);border-top:1.5px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 16px rgba(0,0,0,0.07);}
+nav button{flex:1;padding:8px 2px 10px;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.3px;color:var(--ink-soft);cursor:pointer;transition:color 0.15s;-webkit-tap-highlight-color:transparent;}
+nav button .nav-icon{font-size:1.35rem;line-height:1;transition:transform 0.15s;}
+nav button.active{color:var(--green);}
+nav button.active .nav-icon{transform:scale(1.1);}
+.view{display:none;padding:14px 13px 0;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px));}
+.view.active{display:block;}
+.status-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;}
+.status-tab{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);background:var(--white);color:var(--ink-soft);font-size:0.72rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+.status-tab.active{border-color:var(--green);background:var(--green-light);color:var(--green-dark);}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--green-dark);}
+.stat-card .lbl{font-size:0.66rem;color:var(--ink-soft);text-transform:uppercase;margin-top:4px;}
+.alert-banner{background:#FFF8E1;border:1.5px solid var(--gold);border-radius:12px;padding:10px 13px;margin-bottom:8px;display:flex;gap:9px;}
+.alert-banner .text{font-size:0.78rem;color:var(--ink);}
+.student-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.1s,box-shadow 0.1s;}
+.student-card:active{transform:scale(0.985);box-shadow:0 1px 4px var(--shadow);}
+.student-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);}
+.student-card.warning::before{background:var(--gold);}
+.student-card.danger::before{background:var(--red);}
+.student-card.trial-card::before{background:var(--blue);}
+.student-card.paused-card{background:#FFFAF5;}
+.student-card.paused-card::before{background:#C45A00;}
+.student-card.churned-card{background:#FAFAF8;opacity:0.85;}
+.student-card.churned-card::before{background:var(--ink-soft);}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;font-family:'Playfair Display',serif;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.avatar.trial-av{background:linear-gradient(135deg,#2A3DC0,var(--blue));}
+.avatar.churned-av{background:linear-gradient(135deg,#6A6A62,var(--ink-soft));}
+.student-info{flex:1;}
+.student-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);}
+.student-meta{font-size:0.74rem;color:var(--ink-soft);margin-top:2px;}
+.student-earnings{font-size:0.74rem;color:var(--green);font-weight:600;margin-top:1px;}
+.hours-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.progress-bar{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:99px;}
+.hours-label{font-size:0.72rem;font-weight:600;color:var(--ink-mid);}
+.card-actions{display:flex;gap:6px;}
+.btn{border:none;border-radius:9px;padding:10px 10px;font-size:0.76rem;font-weight:600;cursor:pointer;}
+.btn-primary{background:var(--green);color:#fff;flex:1;}
+.btn-primary:disabled{background:#C0C0B8;cursor:not-allowed;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink-mid);}
+.btn-outline:hover{border-color:var(--green);}
+.btn-gold{background:var(--gold);color:#fff;flex:1;}
+.btn-red{background:var(--red);color:#fff;flex:1;}
+.btn-blue{background:var(--blue);color:#fff;flex:1;}
+.btn-danger{border:1.5px solid #F0C8C8;color:var(--red);background:transparent;}
+.btn-sm{padding:6px 10px;font-size:0.68rem;}
+.btn-quick{background:var(--green-light);color:var(--green-dark);border:1.5px solid var(--green-dark);border-radius:9px;padding:7px 9px;font-weight:700;font-size:0.68rem;cursor:pointer;white-space:nowrap;}
+.btn-quick:disabled{opacity:0.4;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:22px 22px 0 0;padding:20px 18px 36px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 -4px 40px rgba(0,0,0,0.15);}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.12rem;color:var(--ink);margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:0.66rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--ink);background:var(--cream);outline:none;}
+.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-light);}
+.modal-btns{display:flex;gap:8px;margin-top:14px;}
+.modal-btns .btn{flex:1;padding:12px;}
+.log-entry{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px;}
+.log-dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.log-dot.missed{background:var(--red);}
+.log-info{flex:1;}
+.log-name{font-size:0.84rem;font-weight:500;}
+.log-date{font-size:0.74rem;color:var(--ink-soft);margin-top:1px;}
+.log-right{font-family:'Playfair Display',serif;font-size:0.96rem;color:var(--green);text-align:right;}
+.log-right.missed{color:var(--red);}
+.earnings-hero{background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:16px;padding:20px;margin-bottom:12px;text-align:center;box-shadow:0 4px 20px rgba(0,104,48,0.25);}
+.earnings-hero .amount{font-family:'Playfair Display',serif;font-size:2.4rem;color:#fff;}
+.earnings-hero .sub{font-size:0.68rem;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-top:5px;}
+.earnings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--white);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px;}
+.er-name{font-weight:500;font-size:0.88rem;}
+.er-detail{font-size:0.72rem;color:var(--ink-soft);}
+.er-amount{font-family:'Playfair Display',serif;font-size:0.92rem;color:var(--green);}
+.month-block{background:var(--white);border:1.5px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.month-header{padding:12px 14px;display:flex;justify-content:space-between;cursor:pointer;}
+.month-header:hover{background:var(--green-light);}
+.month-title{font-family:'Playfair Display',serif;font-size:0.98rem;}
+.month-earnings{font-size:0.88rem;font-weight:700;color:var(--green);}
+.month-body{padding:0 13px 12px;border-top:1.5px solid var(--border);display:none;}
+.month-body.open{display:block;padding-top:10px;}
+.ltv-card{background:linear-gradient(135deg,#1A1A30,#2A3DC0);border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 3px 14px rgba(58,79,208,0.25);}
+.ltv-card .ltv-title{font-size:0.64rem;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:8px;}
+.ltv-card .ltv-amount{font-family:'Playfair Display',serif;font-size:2rem;color:#fff;}
+.ltv-card .ltv-sub{font-size:0.7rem;color:rgba(255,255,255,0.5);margin-top:4px;}
+.ltv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.ltv-mini{background:rgba(255,255,255,0.1);border-radius:9px;padding:8px;text-align:center;}
+.ltv-mini .lm-val{font-family:'Playfair Display',serif;font-size:0.9rem;color:#fff;}
+.ltv-mini .lm-lbl{font-size:0.58rem;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-top:2px;}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.overview-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
+.overview-card .num{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green-dark);}
+.overview-card.trial .num{color:var(--blue);}
+.overview-card.churned .num{color:var(--ink-soft);}
+.overview-card .lbl{font-size:0.6rem;color:var(--ink-soft);text-transform:uppercase;margin-top:4px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:0.68rem;font-weight:600;text-transform:uppercase;}
+.badge-green{background:var(--green-light);color:var(--green-dark);border:1px solid;border-color:var(--green);}
+.badge-trial{background:var(--blue-light);color:var(--blue);border:1px solid;}
+.badge-churned{background:var(--warm);color:var(--ink-soft);border:1px solid var(--border);}
+.badge-paused{background:#FFF0E0;color:#C45A00;border:1px solid #F0C090;}
+.badge-gold{background:#FFF8E1;color:#8A6A00;border:1px solid #F0D878;}
+.badge-red{background:var(--red-light);color:var(--red);border:1px solid #F0C8C8;}
+.empty-state{text-align:center;padding:38px 16px;color:#C0C0B8;}
+.empty-state .icon{font-size:2rem;margin-bottom:10px;}
+.info-chip{background:var(--warm);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:8px;display:flex;justify-content:space-between;}
+.info-chip .label{font-size:0.7rem;color:var(--ink-soft);}
+.info-chip .value{font-size:0.84rem;font-weight:600;}
+.import-zone{border:2px dashed var(--border);border-radius:14px;padding:22px;text-align:center;cursor:pointer;margin-top:8px;}
+.import-zone:hover{border-color:var(--green);background:var(--green-light);}
+.import-zone .icon{font-size:1.8rem;margin-bottom:6px;}
+.data-badge{display:flex;align-items:center;gap:6px;background:var(--warm);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:6px;}
+.data-badge .d-icon{font-size:1.1rem;}
+.data-badge .d-count{font-size:0.9rem;font-weight:700;}
+.data-badge .d-label{font-size:0.66rem;color:var(--ink-soft);}
+.fab{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom,0px));right:18px;width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(0,146,70,0.4);display:flex;align-items:center;justify-content:center;z-index:99;}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green-dark);color:#fff;padding:9px 20px;border-radius:99px;font-size:0.8rem;font-weight:500;opacity:0;transition:all 0.3s;z-index:300;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#quick-note-panel{position:fixed;bottom:0;left:0;right:0;z-index:301;transform:translateY(100%);transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1);pointer-events:none;}
+#quick-note-panel.show{transform:translateY(0);pointer-events:all;}
+#qnp-inner{background:var(--ink);border-radius:18px 18px 0 0;padding:14px 16px 28px;max-width:480px;margin:0 auto;box-shadow:0 -4px 24px rgba(0,0,0,0.3);}
+#qnp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+#qnp-msg{color:#fff;font-size:0.82rem;font-weight:500;}
+.qnp-btn-undo{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:5px 12px;font-size:0.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.qnp-btn-undo:hover{background:rgba(255,255,255,0.2);}
+#qnp-note-row{display:flex;gap:8px;align-items:center;}
+#qnp-input{flex:1;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px;color:#fff;font-size:0.86rem;font-family:'DM Sans',sans-serif;outline:none;}
+#qnp-input::placeholder{color:rgba(255,255,255,0.35);}
+#qnp-input:focus{border-color:var(--green);background:rgba(255,255,255,0.15);}
+.qnp-btn-save{background:var(--green);color:#fff;border:none;border-radius:10px;width:38px;height:38px;font-size:1rem;cursor:pointer;flex-shrink:0;}
+.section-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 8px;}
+.growth-hero{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.g-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px;box-shadow:0 1px 6px var(--shadow);}
+.g-card.full{grid-column:span 2;}
+.g-card.green-grad{background:linear-gradient(135deg,var(--green-dark),var(--green));border:none;box-shadow:0 4px 16px rgba(0,104,48,0.25);}
+.g-card.blue-grad{background:linear-gradient(135deg,#1A2080,var(--blue));border:none;box-shadow:0 4px 16px rgba(58,79,208,0.25);}
+.g-num{font-family:'Playfair Display',serif;font-size:2rem;line-height:1;color:var(--green-dark);}
+.g-card.green-grad .g-num,.g-card.blue-grad .g-num{color:#fff;font-size:2.2rem;}
+.g-lbl{font-size:0.63rem;text-transform:uppercase;letter-spacing:0.9px;color:var(--ink-soft);margin-top:5px;}
+.g-card.green-grad .g-lbl,.g-card.blue-grad .g-lbl{color:rgba(255,255,255,0.5);}
+.g-delta{font-size:0.7rem;font-weight:600;margin-top:8px;display:inline-block;padding:3px 10px;border-radius:99px;}
+.g-delta.up{background:rgba(255,255,255,0.2);color:#fff;}
+.g-delta.down{background:rgba(206,43,55,0.15);color:#fff;}
+.g-delta.flat{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);}
+.g-delta.up-dark{background:var(--green-light);color:var(--green-dark);}
+.g-delta.down-dark{background:var(--red-light);color:var(--red-dark);}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:90px;padding:0 2px;margin-top:10px;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+.bar{width:100%;border-radius:5px 5px 0 0;background:var(--green-mid);min-height:4px;}
+.bar.cur{background:var(--green);box-shadow:0 2px 8px rgba(0,146,70,0.3);}
+.bar-lbl{font-size:0.58rem;color:var(--ink-soft);}
+.bar-val{font-size:0.62rem;font-weight:700;color:var(--green-dark);}
+.bar-val.cur{color:var(--green);}
+.rev-bar{width:100%;border-radius:5px 5px 0 0;background:#C8D0F8;min-height:4px;}
+.rev-bar.cur{background:var(--blue);box-shadow:0 2px 8px rgba(58,79,208,0.3);}
+.rev-val{font-size:0.58rem;font-weight:700;color:var(--blue);}
+.pct-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;margin-bottom:8px;}
+.pct-info .pct-label{font-size:0.82rem;font-weight:600;}
+.pct-info .pct-sub{font-size:0.67rem;color:var(--ink-soft);margin-top:2px;}
+.pct-val{font-family:'Playfair Display',serif;font-size:1.5rem;}
+.pct-val.up{color:var(--green);}
+.pct-val.down{color:var(--red);}
+.pct-val.flat{color:var(--ink-soft);}
+.note-entry{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:13px;margin-bottom:8px;}
+.note-entry:hover{cursor:pointer;}
+.note-student{font-weight:600;font-size:0.86rem;color:var(--green-dark);}
+.note-date{font-size:0.67rem;color:var(--ink-soft);}
+.note-body{font-size:0.84rem;line-height:1.5;margin-top:6px;}
+/* RANKING */
+.month-nav{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:12px;box-shadow:0 1px 6px var(--shadow);}
+.month-nav-btn{background:none;border:1.5px solid var(--border);border-radius:8px;width:34px;height:34px;font-size:1rem;cursor:pointer;color:var(--ink-mid);display:flex;align-items:center;justify-content:center;}
+.month-nav-btn:hover{border-color:var(--green);color:var(--green);}
+.month-nav-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--ink);}
+.ranking-hero{background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,104,48,0.25);}
+.ranking-hero .rh-title{font-size:0.66rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.ranking-hero .rh-amount{font-family:'Playfair Display',serif;font-size:2.4rem;color:#fff;line-height:1;}
+.ranking-hero .rh-sub{font-size:0.7rem;color:rgba(255,255,255,0.5);margin-top:5px;}
+.ranking-hero-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
+.rh-mini{background:rgba(255,255,255,0.12);border-radius:10px;padding:8px;text-align:center;}
+.rh-mini .v{font-family:'Playfair Display',serif;font-size:1rem;color:#fff;}
+.rh-mini .l{font-size:0.58rem;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-top:2px;}
+.rank-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px var(--shadow);}
+.rank-card.rank-1{border-color:#C9A84C;box-shadow:0 2px 12px rgba(201,168,76,0.2);}
+.rank-card.rank-2{border-color:#B0B8C8;}
+.rank-card.rank-3{border-color:#C8905A;}
+.rank-badge{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700;flex-shrink:0;}
+.rank-badge.r1{background:linear-gradient(135deg,#C9A84C,#F0D878);color:#fff;}
+.rank-badge.r2{background:linear-gradient(135deg,#8A96A8,#B0B8C8);color:#fff;}
+.rank-badge.r3{background:linear-gradient(135deg,#A06040,#C8905A);color:#fff;}
+.rank-badge.rn{background:var(--warm);color:var(--ink-soft);font-size:0.78rem;}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-family:'Playfair Display',serif;font-size:0.96rem;color:var(--ink);}
+.rank-detail{font-size:0.67rem;color:var(--ink-soft);margin-top:3px;}
+.rank-amount{text-align:right;flex-shrink:0;}
+.rank-earned{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green-dark);}
+.rank-missed{font-size:0.65rem;color:var(--red);margin-top:2px;}
+.rank-bar-wrap{margin-top:6px;height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+.rank-bar-fill{height:100%;background:var(--green);border-radius:99px;}
+#pin-screen{position:fixed;inset:0;background:var(--green-dark);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+#pin-screen.hidden{display:none;}
+.pin-flag{display:flex;height:3px;width:100%;position:absolute;top:0;}
+.pin-flag-g{flex:1;background:#009246;}.pin-flag-w{flex:1;background:#fff;}.pin-flag-r{flex:1;background:#CE2B37;}
+.pin-title{font-family:'Playfair Display',serif;font-style:italic;color:#fff;font-size:1.8rem;margin-bottom:6px;}
+.pin-sub{font-size:0.78rem;color:rgba(255,255,255,0.45);margin-bottom:40px;letter-spacing:0.5px;}
+.pin-dots{display:flex;gap:14px;margin-bottom:40px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.3);transition:all 0.15s;}
+.pin-dot.filled{background:#fff;border-color:#fff;}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px;}
+.pin-btn{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:1.4rem;font-weight:500;padding:18px 0;cursor:pointer;transition:all 0.12s;-webkit-tap-highlight-color:transparent;text-align:center;}
+.pin-btn:active{background:rgba(255,255,255,0.25);transform:scale(0.95);}
+.pin-btn.del{font-size:1rem;color:rgba(255,255,255,0.6);}
+.pin-btn.empty{background:transparent;border-color:transparent;pointer-events:none;}
+.pin-error{color:#FF6B6B;font-size:0.78rem;margin-top:-28px;margin-bottom:16px;min-height:18px;text-align:center;}
+.pin-change{margin-top:24px;background:none;border:none;color:rgba(255,255,255,0.35);font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div id="pin-screen">
+  <div class="pin-flag"><div class="pin-flag-g"></div><div class="pin-flag-w"></div><div class="pin-flag-r"></div></div>
+  <div class="pin-title">Lezioni d'Italiano</div>
+  <div class="pin-sub" id="pin-sub">PIN eingeben</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+    <div class="pin-dot" id="pd4"></div>
+    <div class="pin-dot" id="pd5"></div>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <button class="pin-btn empty"></button>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <button class="pin-change" onclick="pinChangeMode()" id="pin-change-btn">PIN ändern</button>
+</div>
+
+<header>
+<div style="display:flex;height:3px;"><div style="flex:1;background:#009246;"></div><div style="flex:1;background:#fff;"></div><div style="flex:1;background:#CE2B37;"></div></div>
+<div class="header-flag"><div class="flag-g"></div><div class="flag-w"></div><div class="flag-r"></div></div>
+<div class="header-inner">
+<div class="header-title">Lezioni d'Italiano</div>
+<div style="display:flex;align-items:center;gap:10px;">
+<button class="header-gear" onclick="openBackupModal()">⚙️</button>
+<span style="font-size:1.4rem;">🇮🇹</span>
+</div>
+</div>
+</header>
+
+<nav id="nav">
+<button class="active" onclick="showView('students')"><span class="nav-icon">👥</span>Schüler</button>
+<button onclick="showView('earnings')"><span class="nav-icon">💶</span>Einnahmen</button>
+<button onclick="showView('notes')"><span class="nav-icon">📝</span>Notizen</button>
+</nav>
+
+<div class="view active" id="view-students">
+<div id="alert-banners"></div>
+<div class="stats-bar" id="stats-bar"></div>
+<div class="status-tabs" id="status-tabs"></div>
+<div style="position:relative;margin-bottom:10px;">
+  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none;">🔍</span>
+  <input id="student-search" type="text" placeholder="Schüler suchen…" oninput="studentSearch=this.value;renderStudents()" style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;background:var(--white);outline:none;">
+</div>
+<div id="leads-section"></div>
+<div id="students-list"></div>
+</div>
+
+<div class="view" id="view-lessons"><div id="lessons-list"></div></div>
+
+<div class="view" id="view-earnings">
+<div class="earnings-hero">
+  <div style="font-size:0.64rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;" id="earnings-hero-month">Diesen Monat</div>
+  <div class="amount" id="total-earnings">€0</div>
+  <div class="sub" id="earnings-hero-sub">Verdient</div>
+</div>
+<div id="earnings-capacity"></div>
+<div id="earnings-ranking"></div>
+<div id="earnings-overview"></div>
+<div id="earnings-monthly"></div>
+<div id="earnings-growth"></div>
+</div>
+
+<div class="view" id="view-growth"><div id="growth-content" style="padding-top:2px;"></div></div>
+
+<div class="view" id="view-ranking"><div id="ranking-content"></div></div>
+
+<div class="view" id="view-notes">
+<div id="notes-filters" style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;"></div>
+<div id="notes-list"></div>
+</div>
+
+<button class="fab" onclick="fabAction()" id="fab">+</button>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-student">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title" id="modal-student-title">Neuer Schüler</div>
+<div class="field"><label>Name</label><input type="text" id="s-name"></div>
+<div class="field"><label>Status</label><select id="s-status"><option value="active">Aktiv</option><option value="trial">Testkunde</option><option value="paused">Pausiert</option></select></div>
+<div class="field"><label>Preis/Std. (EUR)</label><input type="number" id="s-rate" min="0" step="0.5"></div>
+<div class="field"><label>Art</label><select id="s-type"><option value="online">Online</option><option value="person">Präsenz</option><option value="both">Beide</option></select></div>
+<div class="field"><label>Niveau</label><input type="text" id="s-level"></div>
+<div class="field"><label>Unterrichtsfrequenz</label><select id="s-freq"><option value="">Nicht festgelegt</option><option value="0.5">Alle 2 Wochen</option><option value="1">1× pro Woche</option><option value="2">2× pro Woche</option><option value="3">3× pro Woche</option></select></div>
+<div class="field"><label>Standard-Dauer</label><select id="s-duration"><option value="">Nicht festgelegt</option><option value="0.25">15 Min</option><option value="0.5">30 Min</option><option value="0.75">45 Min</option><option value="1">60 Min</option><option value="1.25">75 Min</option><option value="1.5">90 Min</option></select></div>
+<div class="field"><label>Notizen</label><input type="text" id="s-notes"></div>
+<div class="field"><label>Start</label><input type="date" id="s-start"></div>
+<div class="modal-btns"><button class="btn btn-outline" onclick="closeModal('modal-student')">Abbruch</button><button class="btn btn-primary" onclick="saveStudent()">Speichern</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-topup">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title">Zahlung</div>
+<div style="background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:10px;padding:10px 12px;margin-bottom:14px;">
+<div style="font-weight:600;font-size:0.9rem;color:var(--green-dark);" id="topup-student-name">–</div>
+</div>
+<div class="field"><label>Stunden</label><input type="number" id="t-hours" min="0.5" step="0.5"></div>
+<div class="field"><label>Zahlungsdatum</label><input type="date" id="t-date"></div>
+<div class="field">
+  <label>Unterricht beginnt ab <span style="color:var(--ink-soft);font-weight:400;text-transform:none;letter-spacing:0;">(optional, falls später)</span></label>
+  <input type="date" id="t-start-date" placeholder="Leer = sofort">
+</div>
+<div style="padding:10px 12px;background:var(--green-light);border-radius:10px;margin-bottom:4px;"><span style="font-size:0.76rem;">Betrag: <strong id="topup-amount">–</strong></span></div>
+<div class="modal-btns"><button class="btn btn-outline" onclick="closeModal('modal-topup')">Abbruch</button><button class="btn btn-gold" onclick="saveTopup()">Kassiert</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-lesson">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title" id="lesson-modal-title">Unterricht</div>
+<div style="border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:14px;background:var(--warm);">
+<div style="font-weight:600;" id="lesson-student-name">–</div>
+<div style="font-size:0.7rem;color:var(--ink-soft);margin-top:2px;" id="lesson-student-hours">–</div>
+</div>
+<div class="field"><label>Dauer (Std.)</label><input type="number" id="l-hours" value="1" min="0.5" step="0.5"></div>
+<div class="field"><label>Datum</label><input type="date" id="l-date"></div>
+<div class="field"><label>Thema</label><input type="text" id="l-note"></div>
+<div class="field" id="l-detailed-note-field" style="display:none;"><label>Notiz</label><textarea id="l-detail"></textarea></div>
+<button onclick="toggleDetailNote()" style="background:none;border:none;color:var(--green);font-size:0.76rem;cursor:pointer;font-weight:600;">+ Notiz</button>
+<div class="modal-btns"><button class="btn btn-outline" onclick="closeModal('modal-lesson')">Abbruch</button><button class="btn btn-primary" id="lesson-save-btn" onclick="saveLesson()">Eintragen</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-note">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title" id="note-modal-title">Notiz</div>
+<div id="note-modal-body"></div>
+<div id="note-modal-footer" style="margin-top:16px;display:flex;gap:8px;">
+<button class="btn btn-outline" style="flex:1;" onclick="closeModal('modal-note')">Schließen</button>
+<button class="btn btn-danger btn-sm" id="note-delete-btn" style="display:none;">Löschen</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-detail">
+<div class="modal">
+<div class="modal-handle"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:10px;border-bottom:1.5px solid var(--border);">
+<div class="modal-title" id="detail-title" style="margin:0;padding:0;border:none;">Details</div>
+<button class="btn btn-outline btn-sm" onclick="printStudentPDF()">PDF</button>
+</div>
+<div id="detail-body"></div>
+<div class="modal-btns" style="margin-top:14px;">
+<button class="btn btn-outline" onclick="closeModal('modal-detail')">Schließen</button>
+<button class="btn btn-outline" onclick="openEditFromDetail()">Bearbeiten</button>
+<button class="btn btn-danger" id="detail-delete-btn">Löschen</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-churn">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title">Abgesprungen</div>
+<div style="background:var(--red-light);border:1.5px solid #F0C8C8;border-radius:10px;padding:10px 12px;margin-bottom:14px;">
+<div style="font-weight:600;font-size:0.9rem;color:var(--red-dark);" id="churn-student-name">–</div>
+</div>
+<div class="field"><label>Datum</label><input type="date" id="churn-date"></div>
+<div class="field"><label>Grund</label><select id="churn-reason"><option value="">Kein Grund</option><option value="Zu teuer">Zu teuer</option><option value="Zeitmangel">Zeitmangel</option><option value="Ziel erreicht">Ziel erreicht</option><option value="Probestunde">Probestunde</option></select></div>
+<div class="modal-btns">
+<button class="btn btn-outline" onclick="closeModal('modal-churn')">Abbruch</button>
+<button class="btn btn-red" onclick="saveChurn()">Speichern</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-backup">
+<div class="modal">
+<div class="modal-handle"></div>
+<div class="modal-title">Backup</div>
+<div class="section-title">Datenmenge</div>
+<div id="backup-stats"></div>
+<div class="section-title">Download</div>
+<div id="backup-last-info" style="font-size:0.72rem;color:var(--ink-soft);text-align:center;margin-bottom:8px;"></div>
+<button class="btn btn-primary" style="width:100%;padding:12px;margin-bottom:4px;" onclick="downloadBackup()">Download</button>
+<div class="section-title">Import</div>
+<div class="import-zone" onclick="document.getElementById('import-file').click()">
+<div class="icon">📂</div>
+<p style="font-size:0.78rem;">Datei antippen</p>
+</div>
+<input type="file" id="import-file" accept=".json" style="display:none;" onchange="handleImportFile(this)">
+<div class="modal-btns" style="margin-top:18px;">
+<button class="btn btn-outline" style="flex:1;" onclick="closeModal('modal-backup')">Schließen</button>
+<button class="btn btn-outline" style="flex:1;" onclick="closeModal('modal-backup');pinChangeMode()">🔒 PIN ändern</button>
+</div>
+</div>
+</div>
+
+<div id="quick-note-panel">
+  <div id="qnp-inner">
+    <div id="qnp-top">
+      <span id="qnp-msg">1h eingetragen</span>
+      <button class="qnp-btn-undo" onclick="undoQuickEntry()">Rückgängig</button>
+    </div>
+    <div id="qnp-note-row">
+      <input id="qnp-input" type="text" placeholder="Thema / Notiz (optional)" onkeydown="if(event.key==='Enter')saveQuickNote()">
+      <button class="qnp-btn-save" onclick="saveQuickNote()">✓</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+let data=JSON.parse(localStorage.getItem('italiano_v3')||'null')||{students:[],lessons:[],payments:[]};
+if(!localStorage.getItem('italiano_v3')&&localStorage.getItem('italiano_v2'))data=JSON.parse(localStorage.getItem('italiano_v2'));
+data.students.forEach(s=>{if(!s.status)s.status='active';});
+
+let currentView='students',editingStudentId=null,activeStudentId=null,lessonIsMissed=false,currentDetailSid=null,notesFilter='all',showDetailNote=false,studentFilter='nonchurned',studentSearch='',lastQuickId=null,undoTimer=null,churnStudentId=null,editingLessonId=null;
+const MN=['','Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+function save(){localStorage.setItem('italiano_v3',JSON.stringify(data));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function today(){return new Date().toISOString().split('T')[0];}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function fmtDate(d){if(!d)return '';const [y,m,dy]=d.split('-');return `${dy}.${m}.${y}`;}
+function fmtCurrency(n){return '€'+(+n).toFixed(2).replace('.',',');}
+function typeLabel(t){return t==='online'?'Online':t==='person'?'Präsenz':'Beide';}
+function getStatus(s){return s.status||'active';}
+function statusLabel(s){const st=typeof s==='string'?s:getStatus(s);return st==='trial'?'Testkunde':st==='churned'?'Abgesprungen':st==='paused'?'Pausiert':'Aktiv';}
+
+function getHours(sid){const paid=data.payments.filter(p=>p.studentId===sid).reduce((s,p)=>s+p.hours,0);const used=data.lessons.filter(l=>l.studentId===sid&&!l.missed).reduce((s,l)=>s+l.hours,0);return {paid,used,remaining:Math.max(0,paid-used)};}
+function getCashReceived(sid){return data.payments.filter(p=>p.studentId===sid).reduce((s,p)=>s+(p.amount||0),0);}
+function getEarnings(sid){const s=data.students.find(x=>x.id===sid);if(!s)return 0;return getHours(sid).used*(s.rate||0);}
+function getMissed(sid){const s=data.students.find(x=>x.id===sid);if(!s)return 0;return data.lessons.filter(l=>l.studentId===sid&&l.missed).reduce((sum,l)=>sum+l.hours*(s.rate||0),0);}
+function daysSince(sid){const ls=data.lessons.filter(l=>l.studentId===sid&&!l.missed);return ls.length?Math.floor((new Date()-new Date(ls.sort((a,b)=>b.date.localeCompare(a.date))[0].date))/86400000):null;}
+function getNotes(){return data.lessons.filter(l=>l.detail&&l.detail.trim()).sort((a,b)=>b.date.localeCompare(a.date));}
+function getLTV(sid){const s=data.students.find(x=>x.id===sid);const cash=getCashReceived(sid);const start=new Date(s.startDate||s.createdAt||today());const end=s.churnDate?new Date(s.churnDate):new Date();const months=Math.max(1,(end-start)/2629800000);return {total:cash,months:Math.round(months*10)/10,perMonth:cash/months};}
+function paymentKey(p){return (p.startDate||p.date).slice(0,7);}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+function showView(name){currentView=name;document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+name).classList.add('active');document.querySelectorAll('nav button')[{students:0,earnings:1,notes:2}[name]].classList.add('active');const fab=document.getElementById('fab');fab.style.display=(name==='students'||name==='notes')?'flex':'none';fab.textContent=name==='notes'?'✏️':'+';if(name==='students')renderStudents();if(name==='earnings')renderEarnings();if(name==='notes')renderNotes();}
+function fabAction(){if(currentView==='notes')openAddNote();else openAddStudent();}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
+
+function openAddStudent(){editingStudentId=null;document.getElementById('modal-student-title').textContent='Neu';['s-name','s-level','s-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('s-rate').value='';document.getElementById('s-type').value='online';document.getElementById('s-status').value='active';document.getElementById('s-freq').value='';document.getElementById('s-duration').value='1';document.getElementById('s-start').value=today();openModal('modal-student');}
+function openEditFromDetail(){openEditStudent(currentDetailSid);closeModal('modal-detail');}
+function openEditStudent(sid){const s=data.students.find(x=>x.id===sid);editingStudentId=sid;document.getElementById('modal-student-title').textContent='Bearbeiten';document.getElementById('s-name').value=s.name;document.getElementById('s-rate').value=s.rate;document.getElementById('s-type').value=s.type||'online';document.getElementById('s-status').value=getStatus(s)==='churned'?'active':getStatus(s);document.getElementById('s-freq').value=s.freq||'';document.getElementById('s-duration').value=s.duration||'1';document.getElementById('s-level').value=s.level||'';document.getElementById('s-notes').value=s.notes||'';document.getElementById('s-start').value=s.startDate||s.createdAt||today();openModal('modal-student');}
+function saveStudent(){const name=document.getElementById('s-name').value.trim();const rate=parseFloat(document.getElementById('s-rate').value);if(!name||!rate||rate<=0){alert('Felder ausfüllen!');return;}const obj={name,rate,status:document.getElementById('s-status').value,type:document.getElementById('s-type').value,freq:document.getElementById('s-freq').value,duration:document.getElementById('s-duration').value||'1',level:document.getElementById('s-level').value.trim(),notes:document.getElementById('s-notes').value.trim(),startDate:document.getElementById('s-start').value||today()};if(editingStudentId){Object.assign(data.students.find(x=>x.id===editingStudentId),obj);showToast('Gespeichert');}else{data.students.push({id:uid(),createdAt:today(),...obj});showToast('Schüler hinzugefügt');}save();closeModal('modal-student');renderStudents();}
+
+function convertTrial(sid){const s=data.students.find(x=>x.id===sid);if(!confirm(`"${s.name}" konvertieren?`))return;s.status='active';s.convertedAt=today();save();closeModal('modal-detail');showToast('Konvertiert');renderStudents();}
+function pauseStudent(sid){const s=data.students.find(x=>x.id===sid);if(!confirm(`"${s.name}" pausieren?`))return;s.status='paused';s.pausedAt=today();save();closeModal('modal-detail');showToast('Pausiert');renderStudents();}
+function openChurn(sid){churnStudentId=sid;const s=data.students.find(x=>x.id===sid);document.getElementById('churn-student-name').textContent=s.name;document.getElementById('churn-date').value=today();document.getElementById('churn-reason').value='';openModal('modal-churn');}
+function saveChurn(){const s=data.students.find(x=>x.id===churnStudentId);s.status='churned';s.churnDate=document.getElementById('churn-date').value||today();s.churnReason=document.getElementById('churn-reason').value;save();closeModal('modal-churn');closeModal('modal-detail');showToast('Abgesprungen');renderStudents();}
+function reactivate(sid){const s=data.students.find(x=>x.id===sid);if(!confirm(`Reaktivieren?`))return;s.status='active';delete s.churnDate;delete s.churnReason;delete s.pausedAt;save();closeModal('modal-detail');showToast('Reaktiviert');renderStudents();}
+
+function openTopup(sid){activeStudentId=sid;const s=data.students.find(x=>x.id===sid);document.getElementById('topup-student-name').textContent=s.name;document.getElementById('t-hours').value='';document.getElementById('t-date').value=today();document.getElementById('t-start-date').value='';document.getElementById('topup-amount').textContent='–';openModal('modal-topup');}
+document.getElementById('t-hours').addEventListener('input',()=>{const s=data.students.find(x=>x.id===activeStudentId);const h=parseFloat(document.getElementById('t-hours').value);document.getElementById('topup-amount').textContent=(s&&h>0)?fmtCurrency(h*s.rate):'–';});
+function saveTopup(){const hours=parseFloat(document.getElementById('t-hours').value);if(!hours||hours<=0){alert('Stunden eingeben!');return;}const s=data.students.find(x=>x.id===activeStudentId);const amount=hours*s.rate;const startDate=document.getElementById('t-start-date').value||null;data.payments.push({id:uid(),studentId:activeStudentId,hours,date:document.getElementById('t-date').value,amount,startDate});save();closeModal('modal-topup');showToast(startDate?`Kassiert · beginnt ab ${fmtDate(startDate)}`:'Kassiert ✓');renderStudents();}
+
+function openEditLesson(lid){
+  const l=data.lessons.find(x=>x.id===lid);if(!l)return;
+  editingLessonId=lid;activeStudentId=l.studentId;lessonIsMissed=l.missed;
+  const s=data.students.find(x=>x.id===l.studentId);
+  document.getElementById('lesson-modal-title').textContent='Unterricht bearbeiten';
+  document.getElementById('lesson-student-name').textContent=s?s.name:'?';
+  document.getElementById('lesson-student-hours').textContent='';
+  document.getElementById('l-hours').value=l.hours;
+  document.getElementById('l-date').value=l.date;
+  document.getElementById('l-note').value=l.note||'';
+  document.getElementById('l-detail').value=l.detail||'';
+  document.getElementById('l-detailed-note-field').style.display=l.detail?'block':'none';
+  const btn=document.getElementById('lesson-save-btn');
+  btn.className=l.missed?'btn btn-red':'btn btn-primary';
+  btn.textContent='Speichern';
+  openModal('modal-lesson');
+}
+function openLesson(sid,missed=false){
+  editingLessonId=null;activeStudentId=sid;lessonIsMissed=missed;showDetailNote=false;
+  const s=data.students.find(x=>x.id===sid);const {remaining}=getHours(sid);
+  document.getElementById('lesson-modal-title').textContent=missed?'Verpasst':'Eintragen';
+  document.getElementById('lesson-student-name').textContent=s.name;
+  document.getElementById('lesson-student-hours').textContent=`${remaining}h verfügbar`;
+  document.getElementById('l-hours').value=s.duration||'1';
+  document.getElementById('l-date').value=today();
+  document.getElementById('l-note').value='';document.getElementById('l-detail').value='';
+  document.getElementById('l-detailed-note-field').style.display='none';
+  const btn=document.getElementById('lesson-save-btn');
+  btn.className=missed?'btn btn-red':'btn btn-primary';
+  btn.textContent=missed?'Verpasst':'Eintragen';
+  openModal('modal-lesson');
+}
+function toggleDetailNote(){showDetailNote=!showDetailNote;document.getElementById('l-detailed-note-field').style.display=showDetailNote?'block':'none';}
+function saveLesson(){
+  const hours=parseFloat(document.getElementById('l-hours').value);
+  const date=document.getElementById('l-date').value;
+  const note=document.getElementById('l-note').value.trim();
+  const detail=document.getElementById('l-detail').value.trim();
+  if(!hours||hours<=0){alert('Stunden!');return;}
+  if(editingLessonId){
+    const l=data.lessons.find(x=>x.id===editingLessonId);
+    if(l){l.hours=hours;l.date=date;l.note=note;l.detail=detail;}
+    save();closeModal('modal-lesson');showToast('Gespeichert ✓');
+    editingLessonId=null;openDetail(currentDetailSid);return;
+  }
+  if(!lessonIsMissed){const {remaining}=getHours(activeStudentId);if(hours>remaining&&!confirm(`Nur ${remaining}h verfügbar. Trotzdem?`))return;}
+  data.lessons.push({id:uid(),studentId:activeStudentId,hours,date,note,detail,missed:lessonIsMissed});
+  save();closeModal('modal-lesson');showToast('Eingetragen');renderStudents();
+}
+
+function quickEntry(sid){
+  const {remaining}=getHours(sid);
+  if(remaining<=0)return;
+  const id=uid();lastQuickId=id;
+  const s=data.students.find(x=>x.id===sid);
+  const dur=parseFloat(s.duration||1);
+  data.lessons.push({id,studentId:sid,hours:dur,date:today(),note:'',detail:'',missed:false});
+  save();renderStudents();
+  document.getElementById('qnp-msg').textContent=`${dur}h eingetragen – ${s.name}`;
+  document.getElementById('qnp-input').value='';
+  document.getElementById('quick-note-panel').classList.add('show');
+  if(undoTimer)clearTimeout(undoTimer);
+  undoTimer=setTimeout(()=>{saveQuickNote();},8000);
+  setTimeout(()=>document.getElementById('qnp-input').focus(),300);
+}
+function saveQuickNote(){
+  if(undoTimer){clearTimeout(undoTimer);undoTimer=null;}
+  const note=document.getElementById('qnp-input').value.trim();
+  if(lastQuickId&&note){
+    const l=data.lessons.find(x=>x.id===lastQuickId);
+    if(l)l.note=note;
+    save();
+  }
+  document.getElementById('quick-note-panel').classList.remove('show');
+  lastQuickId=null;
+}
+function undoQuickEntry(){
+  if(!lastQuickId)return;
+  if(undoTimer){clearTimeout(undoTimer);undoTimer=null;}
+  data.lessons=data.lessons.filter(l=>l.id!==lastQuickId);
+  lastQuickId=null;
+  document.getElementById('quick-note-panel').classList.remove('show');
+  save();renderStudents();showToast('Rückgängig ✓');
+}
+
+function openDetail(sid){currentDetailSid=sid;const s=data.students.find(x=>x.id===sid);const {paid,used,remaining}=getHours(sid);const cash=getCashReceived(sid);const lessons=data.lessons.filter(l=>l.studentId===sid&&!l.noteOnly).sort((a,b)=>b.date.localeCompare(a.date));const payments=data.payments.filter(p=>p.studentId===sid).sort((a,b)=>b.date.localeCompare(a.date));const status=getStatus(s);const ltv=getLTV(sid);document.getElementById('detail-title').textContent=s.name;
+
+// Monthly breakdown
+const thisMonth=today().slice(0,7);
+const lmDate=new Date();lmDate.setMonth(lmDate.getMonth()-1);
+const lastMonth=lmDate.toISOString().slice(0,7);
+const monthEarned=m=>{const h=data.lessons.filter(l=>l.studentId===sid&&l.date.startsWith(m)&&!l.missed&&!l.noteOnly).reduce((s,l)=>s+l.hours,0);return {h,earned:h*(s.rate||0),missed:data.lessons.filter(l=>l.studentId===sid&&l.date.startsWith(m)&&l.missed).reduce((s,l)=>s+l.hours,0)};};
+const tm=monthEarned(thisMonth);
+const lm=monthEarned(lastMonth);
+const [ty,tmo]=thisMonth.split('-');
+const [ly,lmo]=lastMonth.split('-');
+
+let html=`
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+  <div style="background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:12px;padding:12px;color:#fff;">
+    <div style="font-size:0.62rem;opacity:0.6;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">${MN[+tmo]} ${ty}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;">${fmtCurrency(tm.earned)}</div>
+    <div style="font-size:0.68rem;opacity:0.7;margin-top:2px;">${tm.h}h gehalten${tm.missed>0?' · '+tm.missed+'h verpasst':''}</div>
+  </div>
+  <div style="background:var(--warm);border:1.5px solid var(--border);border-radius:12px;padding:12px;">
+    <div style="font-size:0.62rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">${MN[+lmo]} ${ly}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink-mid);">${fmtCurrency(lm.earned)}</div>
+    <div style="font-size:0.68rem;color:var(--ink-soft);margin-top:2px;">${lm.h}h gehalten${lm.missed>0?' · '+lm.missed+'h verpasst':''}</div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+  <div class="stat-card"><div class="num">${paid}</div><div class="lbl">Bezahlt</div></div>
+  <div class="stat-card"><div class="num">${used}</div><div class="lbl">Gehalten</div></div>
+  <div class="stat-card"><div class="num" style="color:${remaining<2?'var(--red)':'var(--green)'};">${remaining}</div><div class="lbl">Rest</div></div>
+</div>
+<div style="display:flex;gap:5px;margin-bottom:10px;"><span class="badge ${status==='trial'?'badge-trial':status==='churned'?'badge-churned':status==='paused'?'badge-paused':'badge-green'}">${statusLabel(status)}</span></div>
+<div class="ltv-card"><div class="ltv-title">Lifetime Value</div><div class="ltv-amount">${fmtCurrency(ltv.total)}</div><div class="ltv-sub">${ltv.months}mo · ${fmtCurrency(ltv.perMonth)}/mo</div><div class="ltv-grid"><div class="ltv-mini"><div class="lm-val">${used}</div><div class="lm-lbl">Std. ges.</div></div><div class="ltv-mini"><div class="lm-val">${fmtCurrency(cash)}</div><div class="lm-lbl">Kassiert</div></div></div></div>`;
+
+if(s.churnDate)html+=`<div class="info-chip"><span class="label">Weg seit</span><span class="value">${fmtDate(s.churnDate)}</span></div>`;
+const days=daysSince(sid);if(days!==null)html+=`<div class="info-chip"><span class="label">Letzter Unterricht</span><span class="value" style="${days>14?'color:var(--red);':''}">${days===0?'Heute':days===1?'Gestern':'vor '+days+' Tagen'}</span></div>`;
+if(s.notes)html+=`<div class="info-chip"><span class="label">Notiz</span><span class="value">${s.notes}</span></div>`;
+html+=`<div class="section-title">Status</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">`;
+if(status==='trial')html+=`<button class="btn btn-primary btn-sm" onclick="convertTrial('${sid}')">→ Aktiv</button>`;
+if(status==='active'||status==='trial')html+=`<button class="btn btn-sm" style="background:#FFF0E0;color:#C45A00;border:1.5px solid #F0C090;" onclick="pauseStudent('${sid}')">⏸ Pausieren</button>`;
+if(status==='active'||status==='trial'||status==='paused')html+=`<button class="btn btn-danger btn-sm" onclick="openChurn('${sid}');closeModal('modal-detail')">Abgesprungen</button>`;
+if(status==='churned'||status==='paused')html+=`<button class="btn btn-blue btn-sm" onclick="reactivate('${sid}')">↩ Reaktivieren</button>`;
+html+=`</div>`;
+if(lessons.length){html+=`<div class="section-title">Unterrichte</div>`;lessons.forEach(l=>{html+=`<div class="log-entry"><div class="log-dot ${l.missed?'missed':''}"></div><div style="flex:1;"><div class="log-name">${fmtDate(l.date)}${l.note?' · '+l.note:''}</div></div><div class="log-right ${l.missed?'missed':''}" style="margin-right:6px;">${l.missed?'❌':l.hours+'h'}</div><button onclick="openEditLesson('${l.id}')" style="background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--ink-mid);font-size:0.72rem;padding:4px 8px;cursor:pointer;margin-right:4px;">✎</button><button onclick="deleteLesson('${l.id}')" style="background:none;border:1.5px solid #F0C8C8;border-radius:8px;color:var(--red);font-size:0.72rem;padding:4px 8px;cursor:pointer;">✕</button></div>`});}
+if(payments.length){html+=`<div class="section-title">Zahlungen</div>`;payments.forEach(p=>{html+=`<div class="earnings-row"><div><div class="er-name">${fmtDate(p.date)} · ${p.hours}h</div><div class="er-detail">${p.startDate?`gilt ab ${fmtDate(p.startDate)}`:''}</div></div><div style="display:flex;align-items:center;gap:8px;"><div class="er-amount">${fmtCurrency(p.amount)}</div><button onclick="deletePayment('${p.id}')" style="background:none;border:1.5px solid #F0C8C8;border-radius:8px;color:var(--red);font-size:0.72rem;padding:4px 8px;cursor:pointer;">✕</button></div></div>`});}
+document.getElementById('detail-body').innerHTML=html;document.getElementById('detail-delete-btn').onclick=()=>{if(!confirm('Schüler wirklich löschen?'))return;data.students=data.students.filter(s=>s.id!==sid);data.lessons=data.lessons.filter(l=>l.studentId!==sid);data.payments=data.payments.filter(p=>p.studentId!==sid);save();closeModal('modal-detail');showToast('Gelöscht');renderStudents();};openModal('modal-detail');}
+function deleteLesson(lid){if(!confirm('Eintrag löschen?'))return;data.lessons=data.lessons.filter(l=>l.id!==lid);save();showToast('Gelöscht ✓');closeModal('modal-detail');renderStudents();}
+function deletePayment(pid){if(!confirm('Zahlung löschen?'))return;data.payments=data.payments.filter(p=>p.id!==pid);save();showToast('Zahlung gelöscht ✓');closeModal('modal-detail');renderStudents();}
+
+function openAddNote(){
+  if(!data.students.length){showToast('Erst Schüler anlegen!');return;}
+  const opts=data.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('note-modal-title').textContent='Neue Notiz';
+  document.getElementById('note-modal-body').innerHTML=
+    `<div class="field"><label>Schüler</label><select id="nn-s">${opts}</select></div>`+
+    `<div class="field"><label>Datum</label><input type="date" id="nn-d" value="${today()}"></div>`+
+    `<div class="field"><label>Titel / Thema</label><input type="text" id="nn-t" placeholder="z.B. Konjunktiv, Vokabeln"></div>`+
+    `<div class="field"><label>Notiz</label><textarea id="nn-n" style="min-height:110px;" placeholder="Was wurde besprochen?"></textarea></div>`;
+  document.getElementById('note-delete-btn').style.display='none';
+  document.getElementById('note-modal-footer').innerHTML=
+    `<button class="btn btn-outline" style="flex:1;" onclick="closeModal('modal-note')">Abbrechen</button>`+
+    `<button class="btn btn-primary" style="flex:1;" onclick="saveStandaloneNote()">Speichern</button>`;
+  openModal('modal-note');
+  setTimeout(()=>document.getElementById('nn-t').focus(),100);
+}
+function saveStandaloneNote(){
+  const sid=document.getElementById('nn-s').value;
+  const date=document.getElementById('nn-d').value;
+  const note=document.getElementById('nn-t').value.trim();
+  const detail=document.getElementById('nn-n').value.trim();
+  if(!detail){alert('Bitte Notiz eingeben.');return;}
+  data.lessons.push({id:uid(),studentId:sid,hours:0,date,note,detail,missed:false,noteOnly:true});
+  save();closeModal('modal-note');showToast('Notiz gespeichert ✓');renderNotes();
+}
+function openNoteById(lid){
+  const l=data.lessons.find(x=>x.id===lid);
+  if(!l||!l.detail)return;
+  const s=data.students.find(x=>x.id===l.studentId);
+  document.getElementById('note-modal-title').textContent=s?s.name:'Notiz';
+  document.getElementById('note-modal-body').innerHTML=
+    `<div style="font-size:0.72rem;color:var(--ink-soft);margin-bottom:8px;">${fmtDate(l.date)}${l.note?' · '+l.note:''}</div>`+
+    `<div style="background:var(--warm);border-radius:10px;padding:14px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">${l.detail}</div>`;
+  document.getElementById('note-modal-footer').innerHTML=
+    `<button class="btn btn-outline" style="flex:1;" onclick="closeModal('modal-note')">Schließen</button>`+
+    `<button class="btn btn-danger btn-sm" onclick="deleteNoteById('${lid}')">Löschen</button>`;
+  openModal('modal-note');
+}
+function deleteNoteById(lid){
+  if(!confirm('Notiz löschen?'))return;
+  const l=data.lessons.find(x=>x.id===lid);
+  if(l){if(l.noteOnly){data.lessons=data.lessons.filter(x=>x.id!==lid);}else{l.detail='';}}
+  save();closeModal('modal-note');showToast('Notiz gelöscht');renderNotes();
+}
+function renderNotes(){const notes=getNotes();const students=[...new Set(notes.map(n=>n.studentId))];const filterBar=document.getElementById('notes-filters');filterBar.innerHTML=`<button onclick="notesFilter='all';renderNotes()" style="white-space:nowrap;padding:6px 14px;border-radius:99px;border:1.5px solid ${notesFilter==='all'?'var(--green)':'var(--border)'};background:${notesFilter==='all'?'var(--green-light)':'var(--white)'};font-size:0.72rem;font-weight:600;cursor:pointer;">Alle</button>`+students.map(sid=>{const s=data.students.find(x=>x.id===sid);if(!s)return '';const active=notesFilter===sid;return `<button onclick="notesFilter='${sid}';renderNotes()" style="white-space:nowrap;padding:6px 14px;border-radius:99px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--green-light)':'var(--white)'};font-size:0.72rem;font-weight:600;cursor:pointer;">${s.name}</button>`;}).join('');const filtered=notesFilter==='all'?notes:notes.filter(n=>n.studentId===notesFilter);const list=document.getElementById('notes-list');if(!filtered.length){list.innerHTML=`<div class="empty-state"><div class="icon">📝</div><p>Noch keine Notizen.<br>Tippe auf ✏️ um eine hinzuzufügen.</p></div>`;return;}list.innerHTML=filtered.map(l=>{const s=data.students.find(x=>x.id===l.studentId);const preview=l.detail.slice(0,100);return `<div class="note-entry" onclick="openNoteById('${l.id}')"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="note-student">${s?s.name:'?'}</span><span class="note-date">${fmtDate(l.date)}</span></div><div class="note-body">${preview}${l.detail.length>100?'…':''}</div></div>`;}).join('');}
+
+function printMonthPDF(key){const [y,m]=key.split('-');const monthPayments=data.payments.filter(p=>paymentKey(p)===key);const cashMonth=monthPayments.reduce((s,p)=>s+(p.amount||0),0);const monthLessons=data.lessons.filter(l=>l.date.startsWith(key)&&!l.missed&&!l.noteOnly);const monthMissed=data.lessons.filter(l=>l.date.startsWith(key)&&l.missed);const heldH=monthLessons.reduce((s,l)=>s+l.hours,0);const missedAmt=monthMissed.reduce((sum,l)=>{const s=data.students.find(x=>x.id===l.studentId);return sum+l.hours*(s?s.rate:0);},0);const studentIds=[...new Set([...monthLessons.map(l=>l.studentId),...monthMissed.map(l=>l.studentId)])];const rows=studentIds.map(sid=>{const s=data.students.find(x=>x.id===sid);const held=monthLessons.filter(l=>l.studentId===sid).reduce((s,l)=>s+l.hours,0);const missed=monthMissed.filter(l=>l.studentId===sid).reduce((s,l)=>s+l.hours,0);const earned=held*(s?s.rate:0);return `<tr><td>${s?s.name:'?'}</td><td style="text-align:center">${held}h</td><td style="text-align:center;color:#CE2B37">${missed>0?missed+'h':'–'}</td><td style="text-align:right;color:#009246">${fmtCurrency(earned)}</td></tr>`;}).join('');const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Georgia;max-width:640px;margin:40px auto;}h1{color:#006830;margin-bottom:4px;}.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0 24px;}.box{background:#F4F4F0;border-radius:8px;padding:12px;text-align:center;}.box .n{font-size:1.4rem;font-weight:bold;color:#006830;}.box .n.red{color:#CE2B37;}.box .l{font-size:0.62rem;color:#8A8A80;text-transform:uppercase;margin-top:3px;}table{width:100%;border-collapse:collapse;}th{background:#006830;color:#fff;padding:9px;text-align:left;}td{padding:8px;border-bottom:1px solid #ddd;font-size:0.9rem;}.total{font-weight:bold;background:#E8F5EE;}</style></head><body><div style="background:linear-gradient(90deg,#009246,#fff,#CE2B37);height:4px;margin-bottom:20px;"></div><h1>Monatsabschluss ${MN[+m]} ${y}</h1><div class="grid"><div class="box"><div class="n">${heldH}</div><div class="l">Std. gehalten</div></div><div class="box"><div class="n">${fmtCurrency(cashMonth)}</div><div class="l">Kassiert</div></div><div class="box"><div class="n red">${missedAmt>0?'-'+fmtCurrency(missedAmt):'–'}</div><div class="l">Entgangen</div></div></div><table><tr><th>Schüler</th><th style="text-align:center">Gehalten</th><th style="text-align:center">Verpasst</th><th style="text-align:right">Verdient</th></tr>${rows}<tr class="total"><td>Gesamt</td><td style="text-align:center">${heldH}h</td><td style="text-align:center"></td><td style="text-align:right;color:#009246">${fmtCurrency(monthLessons.reduce((sum,l)=>{const s=data.students.find(x=>x.id===l.studentId);return sum+l.hours*(s?s.rate:0);},0))}</td></tr></table><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close();}
+
+function renderGrowth(){
+  const now=new Date();
+  const getSD=s=>new Date(s.startDate||s.createdAt||today());
+  const thisY=now.getFullYear(), thisM=now.getMonth();
+
+  // totals
+  const totalAll=data.students.length;
+  const totalActive=data.students.filter(s=>getStatus(s)==='active').length;
+  const totalTrial=data.students.filter(s=>getStatus(s)==='trial').length;
+  const totalChurned=data.students.filter(s=>getStatus(s)==='churned').length;
+  const convRate=(totalActive+totalChurned)>0?Math.round((totalActive/(totalActive+totalChurned))*100):0;
+
+  // last 6 months data
+  const months=[];
+  for(let i=5;i>=0;i--){
+    const d=new Date(thisY,thisM-i,1);
+    months.push({y:d.getFullYear(),m:d.getMonth(),label:MN[d.getMonth()+1]});
+  }
+  const newPerMonth=months.map(({y,m})=>
+    data.students.filter(s=>{const d=getSD(s);return d.getFullYear()===y&&d.getMonth()===m;}).length
+  );
+  const revPerMonth=months.map(({y,m})=>{
+    const key=`${y}-${String(m+1).padStart(2,'0')}`;
+    return data.payments.filter(p=>paymentKey(p).startsWith(key)).reduce((s,p)=>s+(p.amount||0),0);
+  });
+  const maxNew=Math.max(...newPerMonth,1);
+  const maxRev=Math.max(...revPerMonth,1);
+
+  // MoM deltas (this month vs last month)
+  const newThis=newPerMonth[5], newLast=newPerMonth[4];
+  const revThis=revPerMonth[5], revLast=revPerMonth[4];
+  const newDelta=newThis-newLast;
+  const revDelta=revThis-revLast;
+  const newDeltaHtml=newDelta>0?`<span class="g-delta up">↑ +${newDelta} vs. Vormonat</span>`:
+    newDelta<0?`<span class="g-delta down">↓ ${newDelta} vs. Vormonat</span>`:
+    `<span class="g-delta flat">= wie Vormonat</span>`;
+  const revDeltaHtml=revDelta>0?`<span class="g-delta up">↑ +${fmtCurrency(revDelta)}</span>`:
+    revDelta<0?`<span class="g-delta down">↓ ${fmtCurrency(Math.abs(revDelta))}</span>`:
+    `<span class="g-delta flat">= wie Vormonat</span>`;
+
+  let html='';
+
+  // ── HERO GRID ──
+  html+=`<div class="growth-hero">
+    <div class="g-card green-grad full">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><div class="g-num">${totalAll}</div><div class="g-lbl">Schüler gesamt</div>${newDeltaHtml}</div>
+        <div><div class="g-num">${fmtCurrency(revThis)}</div><div class="g-lbl">Einnahmen ${MN[thisM+1]}</div>${revDeltaHtml}</div>
+      </div>
+    </div>
+    <div class="g-card"><div class="g-num" style="color:var(--green);">${totalActive}</div><div class="g-lbl">Aktive Schüler</div></div>
+    <div class="g-card"><div class="g-num" style="color:var(--blue);">${totalTrial}</div><div class="g-lbl">Testkunden</div></div>
+  </div>`;
+
+  // ── MoM VERGLEICH ──
+  html+=`<div class="section-title" style="margin-top:0;">Monat für Monat</div>`;
+  html+=`<div class="pct-row"><div class="pct-info"><div class="pct-label">Neue Schüler</div><div class="pct-sub">${MN[thisM+1]} vs. ${MN[thisM===0?11:thisM]}</div></div><div class="pct-val ${newDelta>0?'up':newDelta<0?'down':'flat'}">${newDelta>0?'+':''}${newDelta}</div></div>`;
+  html+=`<div class="pct-row"><div class="pct-info"><div class="pct-label">Einnahmen</div><div class="pct-sub">${MN[thisM+1]} vs. ${MN[thisM===0?11:thisM]}</div></div><div class="pct-val ${revDelta>0?'up':revDelta<0?'down':'flat'}">${revDelta>0?'+':''}${fmtCurrency(revDelta)}</div></div>`;
+  html+=`<div class="pct-row"><div class="pct-info"><div class="pct-label">Aktive Schüler</div><div class="pct-sub">Konversionsrate</div></div><div class="pct-val ${convRate>=70?'up':convRate>=40?'flat':'down'}">${convRate}%</div></div>`;
+
+  // ── BALKEN: NEUE SCHÜLER ──
+  html+=`<div class="section-title">Neue Schüler – letzte 6 Monate</div>`;
+  html+=`<div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px 10px;margin-bottom:14px;box-shadow:0 1px 6px var(--shadow);">`;
+  html+=`<div class="bar-chart">`;
+  months.forEach(({label},i)=>{
+    const val=newPerMonth[i];
+    const isCur=i===5;
+    const h=maxNew>0?Math.max((val/maxNew)*100,val>0?8:3):3;
+    html+=`<div class="bar-wrap"><div class="bar-val ${isCur?'cur':''}">${val||''}</div><div class="bar ${isCur?'cur':''}" style="height:${h}%"></div><div class="bar-lbl">${label}</div></div>`;
+  });
+  html+=`</div></div>`;
+
+  // ── BALKEN: EINNAHMEN ──
+  html+=`<div class="section-title">Einnahmen – letzte 6 Monate</div>`;
+  html+=`<div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px 10px;margin-bottom:14px;box-shadow:0 1px 6px var(--shadow);">`;
+  html+=`<div class="bar-chart">`;
+  months.forEach(({label},i)=>{
+    const val=revPerMonth[i];
+    const isCur=i===5;
+    const h=maxRev>0?Math.max((val/maxRev)*100,val>0?8:3):3;
+    html+=`<div class="bar-wrap"><div class="rev-val ${isCur?'cur':''}">${val>0?'€'+Math.round(val):''}</div><div class="rev-bar ${isCur?'cur':''}" style="height:${h}%"></div><div class="bar-lbl">${label}</div></div>`;
+  });
+  html+=`</div></div>`;
+
+  // ── TRICHTER ──
+  html+=`<div class="section-title">Schülertrichter</div>`;
+  const churnedStudents=data.students.filter(s=>getStatus(s)==='churned');
+  const avgLTV=churnedStudents.length>0?(churnedStudents.reduce((sum,s)=>sum+getLTV(s.id).total,0)/churnedStudents.length):0;
+  html+=`<div style="background:var(--blue-light);border:1.5px solid var(--blue-mid);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:0.84rem;font-weight:600;color:var(--blue);">🔵 Testkunden</div><div style="font-size:0.67rem;color:var(--ink-soft);">Probestunde – noch nicht aktiv</div></div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--blue);">${totalTrial}</div></div>`;
+  html+=`<div style="text-align:center;font-size:0.72rem;color:var(--green);margin:3px 0;letter-spacing:0.5px;">↓ ${convRate}% konvertiert</div>`;
+  html+=`<div style="background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:0.84rem;font-weight:600;color:var(--green-dark);">✅ Aktive Schüler</div><div style="font-size:0.67rem;color:var(--ink-soft);">Zahlende Kunden</div></div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--green-dark);">${totalActive}</div></div>`;
+  html+=`<div style="text-align:center;font-size:0.72rem;color:var(--ink-soft);margin:3px 0 6px;">↓ Churn</div>`;
+  html+=`<div style="background:var(--warm);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:0.84rem;font-weight:600;">⬜ Abgesprungen</div><div style="font-size:0.67rem;color:var(--ink-soft);">${churnedStudents.length>0?'Ø LTV '+fmtCurrency(avgLTV):'Noch niemand abgesprungen'}</div></div><div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink-soft);">${totalChurned}</div></div>`;
+
+  // ── ABGESPRUNGENE ──
+  if(churnedStudents.length>0){
+    html+=`<div class="section-title">Abgesprungene Schüler (LTV)</div>`;
+    churnedStudents.forEach(s=>{
+      const ltv=getLTV(s.id);
+      html+=`<div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+        <div><div style="font-weight:600;font-size:0.86rem;">${s.name}</div>
+        <div style="font-size:0.67rem;color:var(--ink-soft);">${s.churnDate?fmtDate(s.churnDate):''}${s.churnReason?' · '+s.churnReason:''}</div></div>
+        <div style="text-align:right;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--blue);">${fmtCurrency(ltv.total)}</div>
+          <div style="font-size:0.62rem;color:var(--ink-soft);">${ltv.months}mo · ${fmtCurrency(ltv.perMonth)}/mo</div>
+        </div></div>`;
+    });
+  }
+
+  document.getElementById('growth-content').innerHTML=html;
+}
+
+let rankingMonth=today().slice(0,7);
+
+function rankingPrevMonth(){const [y,m]=rankingMonth.split('-').map(Number);const d=new Date(y,m-2,1);rankingMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;renderRanking();}
+function rankingNextMonth(){const [y,m]=rankingMonth.split('-').map(Number);const d=new Date(y,m,1);const now=new Date();if(d>now)return;rankingMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;renderRanking();}
+
+function renderRanking(){
+  const [y,m]=rankingMonth.split('-').map(Number);
+  const monthLabel=MN[m]+' '+y;
+  const isCurrentMonth=rankingMonth===today().slice(0,7);
+
+  // Per student: verdient = held lessons this month × rate, missed = missed × rate
+  const rows=data.students.filter(s=>getStatus(s)!=='churned').map(s=>{
+    const lessons=data.lessons.filter(l=>l.studentId===s.id&&l.date.startsWith(rankingMonth));
+    const heldH=lessons.filter(l=>!l.missed&&!l.noteOnly).reduce((sum,l)=>sum+l.hours,0);
+    const missedH=lessons.filter(l=>l.missed).reduce((sum,l)=>sum+l.hours,0);
+    const verdient=heldH*(s.rate||0);
+    const missedAmt=missedH*(s.rate||0);
+    const kassiert=data.payments.filter(p=>p.studentId===s.id&&paymentKey(p)===rankingMonth).reduce((sum,p)=>sum+(p.amount||0),0);
+    return {s,heldH,missedH,verdient,missedAmt,kassiert};
+  }).filter(r=>r.heldH>0||r.missedH>0).sort((a,b)=>b.verdient-a.verdient);
+
+  const totalVerdient=rows.reduce((sum,r)=>sum+r.verdient,0);
+  const totalMissed=rows.reduce((sum,r)=>sum+r.missedAmt,0);
+  const totalHours=rows.reduce((sum,r)=>sum+r.heldH,0);
+  const maxVerdient=rows.length>0?rows[0].verdient:1;
+
+  let html='';
+
+  // Month nav
+  html+=`<div class="month-nav">
+    <button class="month-nav-btn" onclick="rankingPrevMonth()">‹</button>
+    <div class="month-nav-label">${monthLabel}${isCurrentMonth?' · laufend':''}</div>
+    <button class="month-nav-btn" onclick="rankingNextMonth()" ${isCurrentMonth?'disabled style="opacity:0.3;"':''}>›</button>
+  </div>`;
+
+  // Hero
+  html+=`<div class="ranking-hero">
+    <div class="rh-title">Verdient ${monthLabel}</div>
+    <div class="rh-amount">${fmtCurrency(totalVerdient)}</div>
+    <div class="rh-sub">${rows.length} Schüler · ${totalHours} Std. gehalten${totalMissed>0?' · -'+fmtCurrency(totalMissed)+' verpasst':''}</div>
+    <div class="ranking-hero-grid">
+      <div class="rh-mini"><div class="v">${rows.length}</div><div class="l">Schüler</div></div>
+      <div class="rh-mini"><div class="v">${totalHours}</div><div class="l">Stunden</div></div>
+      <div class="rh-mini"><div class="v" style="${totalMissed>0?'color:#FF9999;':''}">${totalMissed>0?'-'+fmtCurrency(totalMissed):'–'}</div><div class="l">Verpasst</div></div>
+    </div>
+  </div>`;
+
+  if(!rows.length){
+    html+=`<div class="empty-state"><div class="icon">📊</div><p>Keine Unterrichte in ${monthLabel}.</p></div>`;
+    document.getElementById('ranking-content').innerHTML=html;
+    return;
+  }
+
+  // Ranked cards
+  rows.forEach((r,i)=>{
+    const rank=i+1;
+    const badgeClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    const cardClass=rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'';
+    const pct=maxVerdient>0?Math.round((r.verdient/maxVerdient)*100):0;
+    html+=`<div class="rank-card ${cardClass}">
+      <div class="rank-badge ${badgeClass}">${rank}</div>
+      <div class="rank-info">
+        <div class="rank-name">${r.s.name}</div>
+        <div class="rank-detail">${r.heldH} Std. · ${fmtCurrency(r.s.rate)}/Std.${r.missedH>0?' · '+r.missedH+'h verpasst':''}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="rank-amount">
+        <div class="rank-earned">${fmtCurrency(r.verdient)}</div>
+        ${r.missedAmt>0?`<div class="rank-missed">-${fmtCurrency(r.missedAmt)}</div>`:''}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('ranking-content').innerHTML=html;
+}
+
+function renderStudents(){
+  const active=data.students.filter(s=>getStatus(s)==='active').length;
+  const trial=data.students.filter(s=>getStatus(s)==='trial').length;
+  const churned=data.students.filter(s=>getStatus(s)==='churned').length;
+  const paused=data.students.filter(s=>getStatus(s)==='paused').length;
+  const totalCash=data.students.reduce((s,st)=>s+getCashReceived(st.id),0);
+  document.getElementById('stats-bar').innerHTML=
+    `<div class="stat-card"><div class="num">${active}</div><div class="lbl">Aktiv</div></div>`+
+    `<div class="stat-card"><div class="num" style="color:var(--blue);">${trial}</div><div class="lbl">Leads</div></div>`+
+    `<div class="stat-card"><div class="num">${fmtCurrency(totalCash)}</div><div class="lbl">€</div></div>`;
+  document.getElementById('status-tabs').innerHTML=
+    `<button class="status-tab ${studentFilter==='nonchurned'?'active':''}" onclick="studentFilter='nonchurned';renderStudents()">Aktiv & Test</button>`+
+    `<button class="status-tab ${studentFilter==='paused'?'active':''}" onclick="studentFilter='paused';renderStudents()" style="${studentFilter==='paused'?'border-color:#C45A00;background:#FFF0E0;color:#C45A00;':''}">⏸ Pausiert${paused>0?' ('+paused+')':''}</button>`+
+    `<button class="status-tab ${studentFilter==='churned'?'active':''}" onclick="studentFilter='churned';renderStudents()">Abgesprungen${churned>0?' ('+churned+')':''}</button>`;
+
+  // ── ALERTS: nur ≤1 Stunde übrig ──
+  const alerts=[];
+  const critical=data.students.filter(s=>getStatus(s)!=='churned'&&getHours(s.id).remaining<=1&&data.payments.filter(p=>p.studentId===s.id).length>0);
+  critical.forEach(s=>alerts.push(`<div class="alert-banner"><span>🔔</span><div class="text"><strong>${s.name}</strong> hat nur noch ${getHours(s.id).remaining}h übrig!</div></div>`));
+  document.getElementById('alert-banners').innerHTML=alerts.join('');
+
+  // ── LEADS-SEKTION: Testkunden separat oben ──
+  const trialStudents=data.students.filter(s=>getStatus(s)==='trial');
+  const showLeads=studentFilter==='nonchurned'&&trialStudents.length>0;
+  let leadsHtml='';
+  if(showLeads){
+    leadsHtml+=`<div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;color:var(--blue);margin:4px 0 8px;letter-spacing:1px;">🔵 Offene Leads (${trialStudents.length})</div>`;
+    trialStudents.forEach(s=>{
+      const days=Math.floor((new Date()-new Date(s.startDate||s.createdAt||today()))/86400000);
+      const daysLabel=days===0?'heute':days===1?'gestern':'vor '+days+' Tagen';
+      const old=days>14;
+      leadsHtml+=`<div class="student-card trial-card" onclick="openDetail('${s.id}')" style="margin-bottom:8px;">
+        <div class="card-top" style="margin-bottom:0;">
+          <div class="avatar trial-av">${initials(s.name)}</div>
+          <div class="student-info">
+            <div class="student-name">${s.name}</div>
+            <div class="student-meta" style="${old?'color:var(--red);':''}">Probestunde · ${daysLabel}${old?' · überfällig':''}</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            
+            <button class="btn btn-blue btn-sm" onclick="convertTrial('${s.id}')">→ Aktiv</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    leadsHtml+=`<div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 8px;letter-spacing:1px;">Aktive Schüler</div>`;
+  }
+  document.getElementById('leads-section').innerHTML=leadsHtml;
+
+  // ── HAUPTLISTE ──
+  let filtered=[...data.students];
+  if(studentFilter==='nonchurned') filtered=filtered.filter(s=>getStatus(s)==='active'); // trials shown separately in leads section
+  else if(studentFilter==='active') filtered=filtered.filter(s=>getStatus(s)==='active');
+  else if(studentFilter==='trial') filtered=filtered.filter(s=>getStatus(s)==='trial');
+  else if(studentFilter==='paused') filtered=filtered.filter(s=>getStatus(s)==='paused');
+  else if(studentFilter==='churned') filtered=filtered.filter(s=>getStatus(s)==='churned');
+  if(studentSearch.trim()) filtered=filtered.filter(s=>s.name.toLowerCase().includes(studentSearch.trim().toLowerCase()));
+
+  const list=document.getElementById('students-list');
+  if(!filtered.length&&!showLeads){list.innerHTML=`<div class="empty-state"><div class="icon">🇮🇹</div><p>Noch keine Schüler.<br>Tippe auf + um anzufangen.</p></div>`;return;}
+  if(!filtered.length){list.innerHTML='';return;}
+
+  const sorted=[...filtered].sort((a,b)=>getHours(a.id).remaining-getHours(b.id).remaining);
+  list.innerHTML=sorted.map(s=>{
+    const {paid,used,remaining}=getHours(s.id);
+    const cash=getCashReceived(s.id);
+    const status=getStatus(s);
+    const pct=paid>0?Math.min(100,(used/paid)*100):0;
+    const low=remaining<=2&&remaining>0&&status!=='churned',empty=remaining===0&&paid>0&&status!=='churned';
+    const cardClass=status==='churned'?'churned-card':status==='paused'?'paused-card':status==='trial'?'trial-card':empty?'danger':low?'warning':'';
+    const avatarClass=status==='churned'?'churned-av':status==='paused'?'churned-av':'';
+    const badge=status==='churned'?`<span class="badge badge-churned">Abgesprungen</span>`:status==='paused'?`<span class="badge badge-paused">⏸ Pausiert</span>`:empty?`<span class="badge badge-red">Voll</span>`:low?`<span class="badge badge-gold">${remaining}h</span>`:`<span class="badge badge-green">${remaining}h</span>`;
+    const days=daysSince(s.id);
+    const freq=parseFloat(s.freq||0);
+    const overdueDays=freq>0?Math.round(7/freq*1.5):null;
+    const isOverdue=freq>0&&days!==null&&days>overdueDays;
+    const freqLabel=freq===0.5?'alle 2 Wo.':freq===1?'1×/Wo.':freq===2?'2×/Wo.':freq===3?'3×/Wo.':'';
+    const overdueHtml=isOverdue?`<span style="color:var(--red);font-weight:600;"> · ⏰ ${days}T überfällig</span>`:(freq>0&&days!==null?`<span style="color:var(--ink-soft);"> · ${days}T</span>`:'');
+    const earningsLine=`${fmtCurrency(cash)}${freqLabel?` · ${freqLabel}`:''}${overdueHtml}`;
+    if(status==='churned'){const ltv=getLTV(s.id);return `<div class="student-card ${cardClass}" onclick="openDetail('${s.id}')"><div class="card-top"><div class="avatar ${avatarClass}">${initials(s.name)}</div><div class="student-info"><div class="student-name">${s.name}</div><div class="student-meta">${badge}</div><div class="student-earnings" style="color:var(--ink-soft);">LTV ${fmtCurrency(ltv.total)}</div></div></div></div>`;}
+    return `<div class="student-card ${cardClass}" onclick="openDetail('${s.id}')"><div class="card-top"><div class="avatar ${avatarClass}">${initials(s.name)}</div><div class="student-info"><div class="student-name">${s.name}</div><div class="student-meta">${typeLabel(s.type||'online')} ${badge}</div><div class="student-earnings">${earningsLine}</div></div></div><div class="hours-row"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><div class="hours-label">${used}/${paid}</div></div><div class="card-actions" onclick="event.stopPropagation()"><button class="btn btn-primary" onclick="openLesson('${s.id}',false)" ${remaining<=0?'disabled':''}>▶ Unterricht</button><button class="btn btn-red" onclick="openLesson('${s.id}',true)">❌ Verpasst</button><button class="btn btn-gold" onclick="openTopup('${s.id}')">💰 Zahlung</button><button class="btn-quick" onclick="quickEntry('${s.id}')" ${remaining<=0?'disabled':''}>${parseFloat(s.duration||1)===1?'1h':parseFloat(s.duration||1)*60+'m'}</button></div></div>`;
+  }).join('');
+}
+
+function renderLessons(){
+  const list=document.getElementById('lessons-list');
+  const sorted=[...data.lessons].filter(l=>!l.noteOnly).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!sorted.length){list.innerHTML=`<div class="empty-state"><div class="icon">📖</div></div>`;return;}
+  let html='';
+  sorted.forEach(l=>{
+    const s=data.students.find(st=>st.id===l.studentId);
+    html+=`<div class="log-entry">
+      <div class="log-dot ${l.missed?'missed':''}"></div>
+      <div style="flex:1;">
+        <div class="log-name">${s?s.name:'?'}${l.missed?' · ❌ Verpasst':''}</div>
+        <div class="log-date">${fmtDate(l.date)}${l.note?' · '+l.note:''}</div>
+      </div>
+      <div class="log-right ${l.missed?'missed':''}" style="margin-right:8px;">${l.hours}h</div>
+      <button onclick="deleteLesson('${l.id}')" style="background:none;border:1.5px solid #F0C8C8;border-radius:8px;color:var(--red);font-size:0.72rem;padding:5px 9px;cursor:pointer;white-space:nowrap;flex-shrink:0;">✕</button>
+    </div>`;
+  });
+  list.innerHTML=html;
+}
+
+function renderEarnings(){
+  const now=new Date();
+  const thisMonth=today().slice(0,7);
+  const [thisY,thisMo]=thisMonth.split('-');
+
+  // ── HERO: Verdient diesen Monat ──
+  const totalCashReceived=data.payments.reduce((s,p)=>s+(p.amount||0),0);
+  const prepaid=data.payments.filter(p=>p.startDate&&p.startDate>today()).reduce((s,p)=>s+(p.amount||0),0);
+  const thisMonthVerdient=data.students.reduce((sum,s)=>{
+    const h=data.lessons.filter(l=>l.studentId===s.id&&l.date.startsWith(thisMonth)&&!l.missed&&!l.noteOnly).reduce((a,l)=>a+l.hours,0);
+    return sum+h*(s.rate||0);
+  },0);
+  const thisMonthHours=data.lessons.filter(l=>l.date.startsWith(thisMonth)&&!l.missed&&!l.noteOnly).reduce((s,l)=>s+l.hours,0);
+  document.getElementById('earnings-hero-month').textContent=`${MN[+thisMo]} ${thisY}`;
+  document.getElementById('total-earnings').textContent=fmtCurrency(thisMonthVerdient);
+  document.getElementById('earnings-hero-sub').innerHTML=
+    `${thisMonthHours}h gehalten · <span style="opacity:0.5;">Kassiert gesamt: ${fmtCurrency(totalCashReceived)}</span>`;
+
+  // ── KAPAZITÄTSKARTE ──
+  const activeStudents=data.students.filter(s=>getStatus(s)==='active'||getStatus(s)==='trial');
+  const weeklyHours=activeStudents.reduce((sum,s)=>{
+    const freq=parseFloat(s.freq||0);
+    const dur=parseFloat(s.duration||1);
+    return sum+(freq>0?freq*dur:0);
+  },0);
+  const monthlyPlanned=weeklyHours*4;
+  const totalOpen=data.students.filter(s=>getStatus(s)!=='churned').reduce((sum,s)=>sum+getHours(s.id).remaining,0);
+  const capHtml=weeklyHours>0?`
+  <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 6px var(--shadow);">
+    <div style="font-size:0.66rem;font-weight:700;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;letter-spacing:1px;">Kapazität</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div class="stat-card"><div class="num">${weeklyHours.toFixed(weeklyHours%1?1:0)}</div><div class="lbl">Std./Wo.</div></div>
+      <div class="stat-card"><div class="num">${monthlyPlanned.toFixed(monthlyPlanned%1?1:0)}</div><div class="lbl">Std./Mo.</div></div>
+      <div class="stat-card"><div class="num" style="color:var(--blue);">${totalOpen}</div><div class="lbl">Offen</div></div>
+    </div>
+    <div style="font-size:0.68rem;color:var(--ink-soft);margin-top:8px;text-align:center;">Basiert auf Frequenz & Dauer deiner Schüler · Offene = bezahlt, noch nicht gehalten</div>
+  </div>`:
+  `<div style="background:var(--warm);border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:center;font-size:0.78rem;color:var(--ink-soft);">
+    Frequenz & Dauer bei deinen Schülern eintragen für Kapazitätsübersicht
+  </div>`;
+  document.getElementById('earnings-capacity').innerHTML=capHtml;
+
+  // ── ÜBERSICHT: neue Schüler diese Monat ──
+  const newTrials=data.students.filter(s=>getStatus(s)==='trial'&&(s.startDate||s.createdAt||today()).startsWith(thisMonth)).length;
+  const converted=data.students.filter(s=>getStatus(s)==='active'&&s.convertedAt&&s.convertedAt.startsWith(thisMonth)).length;
+  const churned=data.students.filter(s=>getStatus(s)==='churned'&&s.churnDate&&s.churnDate.startsWith(thisMonth)).length;
+
+  let overviewHtml=`<div class="overview-grid">
+    <div class="overview-card"><div class="num">${newTrials}</div><div class="lbl">Tests</div></div>
+    <div class="overview-card"><div class="num" style="color:var(--blue);">${converted}</div><div class="lbl">Konv.</div></div>
+    <div class="overview-card churned"><div class="num">${churned}</div><div class="lbl">Weg</div></div>
+    <div class="overview-card"><div class="num">${newTrials+converted-churned}</div><div class="lbl">Netto</div></div>
+  </div>`;
+
+  // Vorauszahlungs-Banner wenn relevant
+  if(prepaid>0){
+    const prepaidPayments=data.payments.filter(p=>p.startDate&&p.startDate>today());
+    const names=prepaidPayments.map(p=>{const s=data.students.find(x=>x.id===p.studentId);return s?s.name:'?';}).join(', ');
+    overviewHtml+=`<div class="alert-banner" style="background:var(--blue-light);border-color:var(--blue-mid);margin-bottom:12px;">
+      <span>💙</span>
+      <div class="text"><strong>Vorauszahlungen: ${fmtCurrency(prepaid)}</strong><br>
+      Kassiert, aber noch nicht zugeordnet · ${names}</div>
+    </div>`;
+  }
+  document.getElementById('earnings-overview').innerHTML=overviewHtml;
+
+  // ── MONATSBLÖCKE ──
+  // Gruppiert nach paymentKey (startDate || date) = "zugeordnet zu Monat"
+  const relevantKeys=[...new Set(data.payments.map(p=>paymentKey(p)))].sort().reverse();
+
+  let html='';
+  relevantKeys.forEach(key=>{
+    const [y,m]=key.split('-');
+
+    // Zugeordnet: Zahlungen deren paymentKey = dieser Monat
+    const assignedPayments=data.payments.filter(p=>paymentKey(p)===key);
+    const assignedAmt=assignedPayments.reduce((s,p)=>s+(p.amount||0),0);
+
+    // Tatsächlich kassiert: Zahlungen die in diesem Kalendermonat eingegangen sind
+    const receivedAmt=data.payments.filter(p=>p.date.startsWith(key)).reduce((s,p)=>s+(p.amount||0),0);
+
+    const differs=Math.abs(assignedAmt-receivedAmt)>0.01;
+
+    const monthLessons=data.lessons.filter(l=>l.date.startsWith(key)&&!l.missed&&!l.noteOnly);
+    const monthMissed=data.lessons.filter(l=>l.date.startsWith(key)&&l.missed);
+    const heldH=monthLessons.reduce((s,l)=>s+l.hours,0);
+    const missedH=monthMissed.reduce((s,l)=>s+l.hours,0);
+    const id='month_'+key.replace('-','_');
+
+    html+=`<div class="month-block">
+      <div class="month-header" onclick="document.getElementById('${id}').classList.toggle('open')">
+        <div>
+          <div class="month-title">${MN[+m]} ${y}</div>
+          <div style="font-size:0.66rem;color:var(--ink-soft);margin-top:2px;">${heldH}h gehalten${missedH>0?' · '+missedH+'h verpasst':''}</div>
+        </div>
+        <div style="text-align:right;display:flex;align-items:center;gap:8px;">
+          <div>
+            <div class="month-earnings">${fmtCurrency(assignedAmt)}</div>
+            ${differs?`<div style="font-size:0.62rem;color:var(--ink-soft);">kassiert: ${fmtCurrency(receivedAmt)}</div>`:''}
+          </div>
+          <button onclick="event.stopPropagation();printMonthPDF('${key}')" style="background:none;border:1px solid var(--border);border-radius:6px;font-size:0.6rem;color:var(--ink-soft);padding:3px 7px;cursor:pointer;">PDF</button>
+        </div>
+      </div>
+      <div class="month-body" id="${id}">`;
+
+    // Zahlungszeilen
+    assignedPayments.forEach(p=>{
+      const s=data.students.find(x=>x.id===p.studentId);
+      const sHeld=monthLessons.filter(l=>l.studentId===p.studentId).reduce((s,l)=>s+l.hours,0);
+      const isForward=p.startDate&&p.startDate!==p.date;
+      html+=`<div class="earnings-row">
+        <div>
+          <div class="er-name">${s?s.name:'?'}</div>
+          <div class="er-detail">
+            Kassiert: ${fmtDate(p.date)}
+            ${isForward?`<span style="color:var(--blue);font-weight:600;"> · gilt ab ${fmtDate(p.startDate)}</span>`:''}
+            ${sHeld>0?' · '+sHeld+'h gehalten':''}
+          </div>
+        </div>
+        <div class="er-amount">${fmtCurrency(p.amount)}</div>
+      </div>`;
+    });
+
+    // Verpasste Unterrichte
+    if(monthMissed.length>0){
+      html+=`<div style="font-size:0.68rem;color:var(--red);padding:6px 2px 2px;">`;
+      html+=`❌ Verpasst: ${monthMissed.map(l=>{const s=data.students.find(x=>x.id===l.studentId);const amt=l.hours*(s?.rate||0);return (s?s.name:'?')+' '+l.hours+'h (−'+fmtCurrency(amt)+')';}).join(', ')}`;
+      html+=`</div>`;
+    }
+
+    html+=`</div></div>`;
+  });
+
+  document.getElementById('earnings-monthly').innerHTML=html;
+
+  // ── RANKING DIESER MONAT ──
+  const rmRows=data.students.filter(s=>getStatus(s)!=='churned').map(s=>{
+    const h=data.lessons.filter(l=>l.studentId===s.id&&l.date.startsWith(thisMonth)&&!l.missed&&!l.noteOnly).reduce((sum,l)=>sum+l.hours,0);
+    const missedH=data.lessons.filter(l=>l.studentId===s.id&&l.date.startsWith(thisMonth)&&l.missed).reduce((sum,l)=>sum+l.hours,0);
+    return {s,h,earned:h*(s.rate||0),missedH,missedAmt:missedH*(s.rate||0)};
+  }).filter(r=>r.h>0||r.missedH>0).sort((a,b)=>b.earned-a.earned);
+  const maxEarned=rmRows.length>0?rmRows[0].earned:1;
+  let rankHtml=`<div class="section-title" style="margin-top:4px;">🏆 Ranking – ${MN[+thisMonth.split('-')[1]]} ${thisMonth.split('-')[0]}</div>`;
+  if(!rmRows.length){rankHtml+=`<div style="text-align:center;padding:14px;color:var(--ink-soft);font-size:0.82rem;">Noch keine Unterrichte diesen Monat.</div>`;}
+  else{rmRows.forEach((r,i)=>{
+    const rank=i+1;
+    const bc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    const cc=rank===1?'rank-1':rank===2?'rank-2':rank===3?'rank-3':'';
+    const pct=Math.round((r.earned/maxEarned)*100);
+    rankHtml+=`<div class="rank-card ${cc}"><div class="rank-badge ${bc}">${rank}</div><div class="rank-info"><div class="rank-name">${r.s.name}</div><div class="rank-detail">${r.h}h · ${fmtCurrency(r.s.rate)}/Std.${r.missedH>0?' · '+r.missedH+'h verpasst':''}</div><div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${pct}%"></div></div></div><div class="rank-amount"><div class="rank-earned">${fmtCurrency(r.earned)}</div>${r.missedAmt>0?`<div class="rank-missed">-${fmtCurrency(r.missedAmt)}</div>`:''}</div></div>`;
+  });}
+  document.getElementById('earnings-ranking').innerHTML=rankHtml;
+
+  // ── WACHSTUM (vereinfacht) ──
+  const getSD=s=>new Date(s.startDate||s.createdAt||today());
+  const totalActive=data.students.filter(s=>getStatus(s)==='active').length;
+  const totalTrial=data.students.filter(s=>getStatus(s)==='trial').length;
+  const totalChurned=data.students.filter(s=>getStatus(s)==='churned').length;
+  const convRate=(totalActive+totalChurned)>0?Math.round((totalActive/(totalActive+totalChurned))*100):0;
+  const months6=[];
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months6.push({y:d.getFullYear(),m:d.getMonth(),label:MN[d.getMonth()+1]});}
+  const newPM=months6.map(({y,m})=>data.students.filter(s=>{const d=getSD(s);return d.getFullYear()===y&&d.getMonth()===m;}).length);
+  const maxNPM=Math.max(...newPM,1);
+  let growHtml=`<div class="section-title" style="margin-top:4px;">📈 Wachstum</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div class="stat-card"><div class="num">${totalActive}</div><div class="lbl">Aktiv</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--blue);">${totalTrial}</div><div class="lbl">Leads</div></div>
+    <div class="stat-card"><div class="num" style="color:${convRate>=70?'var(--green)':'var(--gold)'};">${convRate}%</div><div class="lbl">Conversion</div></div>
+  </div>
+  <div style="background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px 10px;margin-bottom:14px;box-shadow:0 1px 6px var(--shadow);">
+    <div style="font-size:0.68rem;font-weight:600;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;">Neue Schüler – letzte 6 Monate</div>
+    <div class="bar-chart">`;
+  months6.forEach(({label},i)=>{
+    const val=newPM[i];const isCur=i===5;
+    const h=maxNPM>0?Math.max((val/maxNPM)*100,val>0?8:3):3;
+    growHtml+=`<div class="bar-wrap"><div class="bar-val ${isCur?'cur':''}">${val||''}</div><div class="bar ${isCur?'cur':''}" style="height:${h}%"></div><div class="bar-lbl">${label}</div></div>`;
+  });
+  growHtml+=`</div></div>
+  <div style="background:var(--warm);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+    <div><div style="font-size:0.82rem;font-weight:600;">🔵 Leads → Aktiv</div><div style="font-size:0.68rem;color:var(--ink-soft);margin-top:2px;">Konversionsrate</div></div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:${convRate>=70?'var(--green)':'var(--gold)'};">${convRate}%</div>
+  </div>
+  ${totalChurned>0?`<div style="background:var(--warm);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:0.82rem;font-weight:600;">⬜ Abgesprungen</div></div><div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink-soft);">${totalChurned}</div></div>`:''}`;
+  document.getElementById('earnings-growth').innerHTML=growHtml;
+}
+
+function printStudentPDF(){const sid=currentDetailSid;const s=data.students.find(x=>x.id===sid);const {paid,used}=getHours(sid);const cash=getCashReceived(sid);const lessons=data.lessons.filter(l=>l.studentId===sid&&!l.noteOnly);const rows=lessons.map(l=>`<tr><td>${fmtDate(l.date)}</td><td>${l.missed?'❌':l.hours+'h'}</td></tr>`).join('');const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Georgia;max-width:600px;margin:40px auto;}h1{color:#006830;font-size:1.4rem;}table{width:100%;margin-top:20px;}th{background:#006830;color:#fff;padding:8px;}td{padding:8px;border-bottom:1px solid #ddd;}</style></head><body><div style="background:linear-gradient(90deg,#009246,#fff,#CE2B37);height:3px;margin-bottom:20px;"></div><h1>${s.name}</h1><table><tr><th>Datum</th><th>Stunden</th></tr>${rows}<tr style="background:#f0f0f0;"><td>Gesamt</td><td>${used}h</td></tr></table><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close();}
+
+function openBackupModal(){const s=data.students.length;const l=data.lessons.filter(x=>!x.noteOnly).length;const p=data.payments.length;document.getElementById('backup-stats').innerHTML=`<div class="data-badge"><span class="d-icon">👥</span><div><div class="d-count">${s}</div><div class="d-label">Schüler</div></div></div><div class="data-badge"><span class="d-icon">📖</span><div><div class="d-count">${l}</div><div class="d-label">Unterrichte</div></div></div><div class="data-badge"><span class="d-icon">💰</span><div><div class="d-count">${p}</div><div class="d-label">Zahlungen</div></div></div>`;const last=localStorage.getItem('italiano_last_export');document.getElementById('backup-last-info').textContent=last?'Letztes: '+fmtDate(last.slice(0,10)):'Noch kein Backup';openModal('modal-backup');}
+function downloadBackup(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lezioni-'+today()+'.json';a.click();localStorage.setItem('italiano_last_export',new Date().toISOString());showToast('Backup heruntergeladen');}
+function handleImportFile(input){if(input.files[0]){const reader=new FileReader();reader.onload=e=>{try{const imported=JSON.parse(e.target.result);if(!imported.students||!imported.lessons||!imported.payments){alert('Ungültig');return;}if(!confirm('Daten überschreiben?'))return;data=imported;save();closeModal('modal-backup');showToast('Importiert');renderStudents();}catch(err){alert('Fehler');}};reader.readAsText(input.files[0]);}}
+
+// ── PIN LOCK ──
+const DEFAULT_PIN='123456';
+let pinInput='',pinMode='unlock',pinNewTemp='';
+function pinGetStored(){return localStorage.getItem('lezioni_pin')||DEFAULT_PIN;}
+function pinUpdateDots(){for(let i=0;i<6;i++)document.getElementById('pd'+i).classList.toggle('filled',i<pinInput.length);}
+function pinPress(digit){
+  if(pinInput.length>=6)return;
+  pinInput+=digit;pinUpdateDots();
+  document.getElementById('pin-error').textContent='';
+  if(pinInput.length===6)setTimeout(pinSubmit,120);
+}
+function pinDel(){pinInput=pinInput.slice(0,-1);pinUpdateDots();document.getElementById('pin-error').textContent='';}
+function pinSubmit(){
+  if(pinMode==='unlock'){
+    if(pinInput===pinGetStored()){
+      document.getElementById('pin-screen').classList.add('hidden');
+    } else {
+      document.getElementById('pin-error').textContent='Falscher PIN.';
+      pinInput='';pinUpdateDots();
+    }
+  } else if(pinMode==='set-new'){
+    pinNewTemp=pinInput;pinInput='';pinUpdateDots();
+    pinMode='confirm-new';
+    document.getElementById('pin-sub').textContent='PIN wiederholen';
+  } else if(pinMode==='confirm-new'){
+    if(pinInput===pinNewTemp){
+      localStorage.setItem('lezioni_pin',pinInput);
+      pinInput='';pinMode='unlock';
+      document.getElementById('pin-screen').classList.add('hidden');
+      showToast('PIN gespeichert ✓');
+    } else {
+      document.getElementById('pin-error').textContent='PINs stimmen nicht überein.';
+      pinInput='';pinNewTemp='';pinMode='set-new';pinUpdateDots();
+      document.getElementById('pin-sub').textContent='Neuen PIN wählen (6 Ziffern)';
+    }
+  }
+}
+function pinChangeMode(){
+  pinMode='set-new';pinInput='';pinNewTemp='';pinUpdateDots();
+  document.getElementById('pin-sub').textContent='Neuen PIN wählen (6 Ziffern)';
+  document.getElementById('pin-error').textContent='';
+  document.getElementById('pin-screen').classList.remove('hidden');
+}
+// Beim Start: falls noch Default-PIN → neuen setzen lassen
+if(pinGetStored()===DEFAULT_PIN){
+  pinMode='set-new';
+  document.getElementById('pin-sub').textContent='Neuen PIN wählen (6 Ziffern)';
+  document.getElementById('pin-change-btn').style.display='none';
+} else {
+  document.getElementById('pin-sub').textContent='PIN eingeben';
+}
+
+renderStudents();
+</script>
+</body>
+</html>
